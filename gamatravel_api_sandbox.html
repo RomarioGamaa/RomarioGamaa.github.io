@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamaTravel - REST API Sandbox & QA Showcase</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@700;800&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* RESET & GENERAL STYLES */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #06090f;
+            background-image:
+                linear-gradient(rgba(0, 255, 141, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 141, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #a0aec0;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* Accent Colors */
+        :root {
+            --neon-green: #00e5a0;
+            --cyber-blue: #0af;
+            --dark-bg: #0b0f19;
+            --panel-bg: rgba(11, 15, 25, 0.75);
+            --border-color: #1e2230;
+            --warn: #ff4757;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #06090f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #111b2d;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-green);
+        }
+
+        /* HEADER */
+        header {
+            background-color: rgba(6, 9, 15, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            color: #fff;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--neon-green);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .badge-status {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: rgba(0, 229, 160, 0.1);
+            border: 1px solid rgba(0, 229, 160, 0.3);
+            color: var(--neon-green);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-status .pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* */
+        /* LAYOUT MAIN */
+        .container {
+            max-width: 1400px;
+            margin: 40px auto 0;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* REUSABLE PANELS */
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-green), var(--cyber-blue));
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title i {
+            color: var(--neon-green);
+        }
+
+        /* */
+        /* CLIENT PORTAL: CRUD FORM */
+        .crud-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: rgba(6, 9, 15, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .crud-form .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #718096;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .form-control {
+            background-color: #06090f;
+            border: 1px solid #1e2e4a;
+            border-radius: 6px;
+            color: #fff;
+            padding: 10px 14px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--neon-green);
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 229, 160, 0.15);
+        }
+
+        .btn {
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background-color: var(--neon-green);
+            color: #06090f;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 15px var(--neon-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #1e2e4a;
+            color: #a0aec0;
+        }
+
+        .btn-outline:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background-color: rgba(255, 71, 87, 0.1);
+            border: 1px solid #ff4757;
+            color: #ff4757;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff4757;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+        }
+
+        /* */
+        /* BOOKINGS LIST TABLE */
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(6, 9, 15, 0.4);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .table th, .table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background-color: rgba(30, 34, 48, 0.4);
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 13px;
+        }
+
+        .table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(30, 34, 48, 0.2);
+        }
+
+        .table td .id-tag {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyber-blue);
+        }
+
+        .badge-status-booking {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .badge-status-booking.confirmado {
+            background-color: rgba(0, 229, 160, 0.1);
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 229, 160, 0.2);
+        }
+
+        .badge-status-booking.pendente {
+            background-color: rgba(255, 165, 0, 0.1);
+            color: #ffa500;
+            border: 1px solid rgba(255, 165, 0, 0.2);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-mini {
+            padding: 6px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+
+        /* */
+        /* MONITOR / INSPECTOR PANEL */
+        .api-inspector {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            gap: 5px;
+        }
+
+        .tab-btn {
+            font-family: 'Share Tech Mono', monospace;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #718096;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--neon-green);
+            border-bottom-color: var(--neon-green);
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* CONSOLE & LOGS */
+        .console-container {
+            background-color: #04060b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            height: 480px;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .console-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+
+        /* */
+        .log-entry {
+            margin-bottom: 15px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .log-method {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 8px;
+            display: inline-block;
+        }
+
+        .log-method.GET { background-color: rgba(0, 179, 255, 0.15); color: var(--cyber-blue); }
+        .log-method.POST { background-color: rgba(0, 229, 160, 0.15); color: var(--neon-green); }
+        .log-method.PUT { background-color: rgba(255, 165, 0, 0.15); color: #ffa500; }
+        .log-method.DELETE { background-color: rgba(255, 71, 87, 0.15); color: #ff4757; }
+
+        .log-url {
+            color: #fff;
+        }
+
+        .log-status {
+            float: right;
+            font-weight: bold;
+        }
+
+        .log-status.success { color: var(--neon-green); }
+        .log-status.error { color: #ff4757; }
+
+        .log-body {
+            color: #8a9bb0;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* */
+        /* AUTOMATION CODE PREVIEW */
+        .code-snippet {
+            background-color: #04060b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            color: #cbd5e0;
+            overflow-x: auto;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .keyword { color: #f92672; }
+        .string { color: #a6e22e; }
+        .comment { color: #75715e; }
+        .number { color: #ae81ff; }
+        .type { color: #66d9ef; }
+
+        /* TEST RESULTS CONSOLE */
+        .test-console {
+            background-color: #04060b;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            height: 340px;
+            overflow-y: auto;
+            color: #e2e8f0;
+        }
+
+        .test-line {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-line.pass i { color: var(--neon-green); }
+        .test-line.fail i { color: #ff4757; }
+        .test-line.info i { color: var(--cyber-blue); }
+
+        /* */
+        /* INTRO EXPLANATORY PANEL */
+        .info-header {
+            max-width: 1400px;
+            margin: 40px auto 0;
+            padding: 0 20px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(11, 15, 25, 0.9), rgba(6, 9, 15, 0.9));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .info-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .info-text h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .info-text h2 span {
+            color: var(--neon-green);
+        }
+
+        .info-text p {
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 800px;
+        }
+
+        .project-tag-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .project-tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            background-color: #111b2d;
+            border: 1px solid #1e2e4a;
+            color: #a0aec0;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* NOTIFICATIONS */
+        .notification-toast {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--neon-green);
+            border-radius: 6px;
+            padding: 15px 25px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateY(150px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .notification-toast.active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<!-- -->
+<!-- HEADER / NAVIGATION -->
+<header>
+    <a href="#" class="logo">// Gama<span>Travel</span></a>
+    <div class="nav-links">
+        <div class="badge-status">
+            <span class="pulse"></span> Mock Server Active // Port: 8080
+        </div>
+    </div>
+</header>
+
+<!-- -->
+<!-- PROJECT INTRODUCTORY CARD -->
+<section class="info-header">
+    <div class="info-card">
+        <div class="info-text">
+            <h2>API REST & CRUD <span>QA Sandbox</span></h2>
+            <p>
+                Este é um simulador de testes de API REST e operações CRUD desenvolvido para validar fluxos integrados de teste de software. Aqui você pode simular o backend e a execução de testes de ponta a ponta que fariam parte de uma suite JUnit / REST Assured de integração contínua.
+            </p>
+            <div class="project-tag-container">
+                <span class="project-tag">JAVA</span>
+                <span class="project-tag">REST ASSURED</span>
+                <span class="project-tag">JUNIT 5</span>
+                <span class="project-tag">CRUD VALIDATION</span>
+                <span class="project-tag">API AUTOMATION</span>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="switchTab('automation'); runAutomationTests();">
+                <i class="fa-solid fa-play"></i> Executar Suite QA
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- -->
+<!-- MAIN TWO COLUMN WORKSPACE -->
+<main class="container">
+
+    <!-- COLUMN 1: INTERACTIVE BOOKING PORTAL (CRUD FRONT-END) -->
+    <section class="panel">
+        <div class="panel-header">
+            <h3 class="panel-title"><i class="fa-solid fa-plane"></i> Reserva de Viagens (CRUD Client)</h3>
+            <span style="font-family: 'Share Tech Mono', monospace; font-size: 13px;">API Endpoint: <span style="color:#fff;">/api/v1/bookings</span></span>
+        </div>
+
+        <!-- New Booking Form -->
+        <form id="bookingForm" class="crud-form" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="bookingId" value="">
+
+            <div class="form-group full-width">
+                <label for="passengerName">Nome do Passageiro</label>
+                <input type="text" id="passengerName" class="form-control" placeholder="Ex: Romário Gama" required>
+            </div>
+
+            <div class="form-group">
+                <label for="destination">Destino da Viagem</label>
+                <input type="text" id="destination" class="form-control" placeholder="Ex: Tóquio, JP" required>
+            </div>
+
+            <div class="form-group">
+                <label for="travelDate">Data de Embarque</label>
+                <input type="date" id="travelDate" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status do Voo</label>
+                <select id="status" class="form-control">
+                    <option value="CONFIRMADO">CONFIRMADO</option>
+                    <option value="PENDENTE">PENDENTE</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="justify-content: flex-end;">
+                <div style="display:flex; gap: 10px; width: 100%;">
+                    <button type="button" id="btnCancelEdit" class="btn btn-outline" style="display: none; flex: 1;" onclick="resetForm()">Cancelar</button>
+                    <button type="submit" id="btnSubmitForm" class="btn btn-primary" style="flex: 1.5;">
+                        <i class="fa-solid fa-plus"></i> Salvar Reserva
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Table of Active Bookings -->
+        <div class="table-responsive">
+            <table class="table" id="bookingsTable">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Passageiro</th>
+                    <th>Destino</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                <!-- Simulated dynamically populated bookings -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- -->
+    <!-- COLUMN 2: API INSPECTOR, LOGS AND TEST SUITE TERMINAL -->
+    <section class="panel">
+        <div class="api-inspector">
+
+            <!-- Tab Controls -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-btn-logs" onclick="switchTab('logs')">
+                    <i class="fa-solid fa-terminal"></i> Histórico API (JSON)
+                </button>
+                <button class="tab-btn" id="tab-btn-automation" onclick="switchTab('automation')">
+                    <i class="fa-solid fa-robot"></i> Automação de Testes
+                </button>
+            </div>
+
+            <!-- TAB CONTENT 1: LIVE HTTP REQUEST/RESPONSE LOGS -->
+            <div class="tab-content active" id="tab-logs">
+                <div class="panel-header" style="border:none; margin-bottom:10px; padding-bottom:0;">
+                    <span style="font-size:13px; color: #718096; font-family:'Share Tech Mono', monospace;">INTERCEPTADOR DE REQUISIÇÕES HTTP</span>
+                    <button class="btn btn-outline btn-mini" onclick="clearLogs()">Limpar Console</button>
+                </div>
+                <div class="console-container" id="apiLogsConsole">
+                    <!-- API logs injected here -->
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 2: AUTOMATED TESTING PANEL (REST ASSURED CODE & TERMINAL) -->
+            <div class="tab-content" id="tab-automation">
+                <span style="font-size:13px; color: #718096; font-family:'Share Tech Mono', monospace; margin-bottom:10px; display:block;">CÓDIGO DE TESTE REST ASSURED (JAVA)</span>
+                <div class="code-snippet">
+                    <span class="comment">// Validação do ciclo CRUD de reservas da GamaTravel</span><br>
+                    <span class="keyword">@Test</span><br>
+                    <span class="keyword">public void</span> <span class="type">testCreateAndValidateBooking</span>() {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="type">Booking</span> newBooking = <span class="keyword">new</span> <span class="type">Booking</span>(<span class="string">"Romário Gama"</span>, <span class="string">"Tóquio"</span>, <span class="string">"CONFIRMADO"</span>);<br><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;given()<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.contentType(<span class="string">"application/json"</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.body(newBooking)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.when()<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.post(<span class="string">"/api/v1/bookings"</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;.then()<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.statusCode(<span class="number">201</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.body(<span class="string">"passengerName"</span>, equalTo(<span class="string">"Romário Gama"</span>))<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.body(<span class="string">"status"</span>, equalTo(<span class="string">"CONFIRMADO"</span>));<br>
+                    }
+                </div>
+
+                <div class="panel-header" style="border:none; margin-bottom:10px; padding-bottom:0;">
+                    <span style="font-size:13px; color: #718096; font-family:'Share Tech Mono', monospace;">SAÍDA DE TESTE (MOCK PIPELINE JUNIT)</span>
+                    <button class="btn btn-primary btn-mini" onclick="runAutomationTests()">Roda Testes</button>
+                </div>
+
+                <div class="test-console" id="testConsole">
+                    <div class="test-line info"><i class="fa-solid fa-info-circle"></i> [INFO] Clique em "Roda Testes" para iniciar os testes automatizados da API.</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- NOTIFICATION TOAST -->
+<div class="notification-toast" id="notificationToast">
+    <i class="fa-solid fa-circle-check" style="color: var(--neon-green); font-size:20px;"></i>
+    <div id="notificationMsg">Mensagem padrão da API</div>
+</div>
+
+<!-- -->
+<!-- JAVASCRIPT LOGIC -->
+<script>
+    // Simulated Mock Database
+    let database = [
+        { id: "GT-104", passengerName: "Ana Clara Silva", destination: "Paris, FR", travelDate: "2026-10-15", status: "CONFIRMADO" },
+        { id: "GT-108", passengerName: "Lucas Alencar", destination: "Nova York, US", travelDate: "2026-12-05", status: "PENDENTE" },
+        { id: "GT-112", passengerName: "Mariana Souza", destination: "Roma, IT", travelDate: "2026-11-20", status: "CONFIRMADO" }
+    ];
+
+    // Bootstrapping the data
+    window.onload = function() {
+        renderTable();
+        logAPIExchange('GET', '/api/v1/bookings', null, 200, database);
+    };
+
+    // Render Table Rows
+    function renderTable() {
+        const tableBody = document.getElementById('bookingsTableBody');
+        tableBody.innerHTML = '';
+
+        database.forEach(booking => {
+            const row = document.createElement('tr');
+            row.id = `row-${booking.id}`;
+            row.innerHTML = `
+                <td><span class="id-tag">${booking.id}</span></td>
+                <td><strong>${booking.passengerName}</strong></td>
+                <td>${booking.destination}</td>
+                <td>${formatDate(booking.travelDate)}</td>
+                <td><span class="badge-status-booking ${booking.status.toLowerCase()}">${booking.status}</span></td>
+                <td class="actions-cell">
+                    <button class="btn btn-outline btn-mini" onclick="editBooking('${booking.id}')" title="Editar / PUT"><i class="fa-solid fa-edit"></i></button>
+                    <button class="btn btn-danger btn-mini" onclick="deleteBooking('${booking.id}')" title="Excluir / DELETE"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    //        // Format date dynamically
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    // Trigger notifications
+    function triggerToast(message) {
+        const toast = document.getElementById('notificationToast');
+        document.getElementById('notificationMsg').innerText = message;
+        toast.classList.add('active');
+        setTimeout(() => {
+            toast.classList.remove('active');
+        }, 3000);
+    }
+
+    // API Log Interceptor / Visualizer
+    function logAPIExchange(method, endpoint, reqBody, status, resBody) {
+        const consoleBox = document.getElementById('apiLogsConsole');
+        const timestamp = new Date().toLocaleTimeString();
+
+        const logHTML = `
+            <div class="log-entry">
+                <div>
+                    <span class="log-method ${method}">${method}</span>
+                    <span class="log-url">${endpoint}</span>
+                    <span class="log-status ${status < 400 ? 'success' : 'error'}">${status}</span>
+                    <span style="color:#718096; font-size:11px; float:right; margin-top:2px;">[${timestamp}]</span>
+                </div>
+                ${reqBody ? `<div style="margin-top:6px; font-size:11px; color:#a0aec0;">REQUEST PAYLOAD:</div><div class="log-body">${JSON.stringify(reqBody, null, 2)}</div>` : ''}
+                <div style="margin-top:6px; font-size:11px; color:#a0aec0;">RESPONSE BODY:</div>
+                <div class="log-body">${JSON.stringify(resBody, null, 2)}</div>
+            </div>
+        `;
+
+        consoleBox.innerHTML += logHTML;
+        consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    //        // Form Submission - Handles both POST (Create) and PUT (Update)
+    function handleFormSubmit(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('bookingId').value;
+        const passengerName = document.getElementById('passengerName').value;
+        const destination = document.getElementById('destination').value;
+        const travelDate = document.getElementById('travelDate').value;
+        const status = document.getElementById('status').value;
+
+        if (id) {
+            // UPDATE (PUT)
+            const index = database.findIndex(b => b.id === id);
+            if (index !== -1) {
+                const originalData = { ...database[index] };
+                database[index] = { id, passengerName, destination, travelDate, status };
+
+                renderTable();
+                logAPIExchange('PUT', `/api/v1/bookings/${id}`, database[index], 200, { message: "Reserva atualizada com sucesso", data: database[index] });
+                triggerToast(`API Response Status 200: Registro ${id} atualizado.`);
+            }
+        } else {
+            // CREATE (POST)
+            const newId = `GT-${Math.floor(100 + Math.random() * 900)}`;
+            const newBooking = { id: newId, passengerName, destination, travelDate, status };
+            database.push(newBooking);
+
+            renderTable();
+            logAPIExchange('POST', '/api/v1/bookings', newBooking, 201, { message: "Reserva criada com sucesso", id: newId });
+            triggerToast(`API Response Status 201: Registro ${newId} criado.`);
+        }
+
+        resetForm();
+    }
+
+    //        // Edit Mode (Load record into form)
+    function editBooking(id) {
+        const booking = database.find(b => b.id === id);
+        if (!booking) return;
+
+        document.getElementById('bookingId').value = booking.id;
+        document.getElementById('passengerName').value = booking.passengerName;
+        document.getElementById('destination').value = booking.destination;
+        document.getElementById('travelDate').value = booking.travelDate;
+        document.getElementById('status').value = booking.status;
+
+        // UI Adjustments
+        document.getElementById('btnSubmitForm').innerHTML = `<i class="fa-solid fa-save"></i> Atualizar Reserva`;
+        document.getElementById('btnCancelEdit').style.display = 'inline-block';
+
+        // Highlight table row being edited
+        document.querySelectorAll('#bookingsTableBody tr').forEach(row => row.style.backgroundColor = 'transparent');
+        document.getElementById(`row-${id}`).style.backgroundColor = 'rgba(0, 179, 255, 0.1)';
+
+        // Intercept as simulated GET /bookings/{id}
+        logAPIExchange('GET', `/api/v1/bookings/${id}`, null, 200, booking);
+    }
+
+    // DELETE Operation
+    function deleteBooking(id) {
+        const index = database.findIndex(b => b.id === id);
+        if (index !== -1) {
+            const deletedItem = database[index];
+            database.splice(index, 1);
+            renderTable();
+
+            logAPIExchange('DELETE', `/api/v1/bookings/${id}`, null, 200, { message: "Registro excluído com sucesso", deletedId: id });
+            triggerToast(`API Response Status 200: Registro ${id} excluído.`);
+
+            // If form was editing deleted item, reset it
+            if (document.getElementById('bookingId').value === id) {
+                resetForm();
+            }
+        }
+    }
+
+    // Reset form to default state
+    function resetForm() {
+        document.getElementById('bookingId').value = '';
+        document.getElementById('bookingForm').reset();
+        document.getElementById('btnSubmitForm').innerHTML = `<i class="fa-solid fa-plus"></i> Salvar Reserva`;
+        document.getElementById('btnCancelEdit').style.display = 'none';
+        document.querySelectorAll('#bookingsTableBody tr').forEach(row => row.style.backgroundColor = 'transparent');
+    }
+
+    // Clear console logs
+    function clearLogs() {
+        document.getElementById('apiLogsConsole').innerHTML = '<div style="color:#718096; font-style:italic;">Logs limpos. Intercepte novas chamadas de API usando a interface ao lado.</div>';
+    }
+
+    // Tab Switcher (Logs VS Code Automation)
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        document.getElementById(`tab-btn-${tabId}`).classList.add('active');
+        document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    //        // SIMULATE AUTOMATED API TEST SUITE (REST ASSURED OUTPUT)
+    function runAutomationTests() {
+        const consoleElement = document.getElementById('testConsole');
+        consoleElement.innerHTML = ''; // Clear prior logs
+
+        const steps = [
+            { type: 'info', text: '[INFO] Iniciando Execution Suite para GamaTravel API - REST Assured v5.3.0...' },
+            { type: 'info', text: '[INFO] Test Suite target: http://localhost:8080/api/v1/bookings' },
+            { type: 'info', text: '[INFO] Rodando 5 cenários integrados com JUnit 5...' },
+            { type: 'pass', text: '[PASS] testGetAllBookings() - GET /bookings - Status esperado: 200 - Asserções de List > 0 validadas.' },
+            { type: 'pass', text: '[PASS] testCreateBooking() - POST /bookings - Payload válido - Status: 201 Created - Id gerado retornado.' },
+            { type: 'pass', text: '[PASS] testGetSingleBooking() - GET /bookings/{id} - Status: 200 - Atributos de payload batem.' },
+            { type: 'pass', text: '[PASS] testUpdateBooking() - PUT /bookings/{id} - Payload atualizado - Status: 200.' },
+            { type: 'pass', text: '[PASS] testDeleteBooking() - DELETE /bookings/{id} - Status: 204 No Content - Registro limpo no banco.' },
+            { type: 'info', text: '---------------------------------------------------------' },
+            { type: 'pass', text: '[SUCCESS] JUnit Results: 5 Tests Passed | 0 Failed | 100% Code Coverage.' }
+        ];
+
+        let index = 0;
+        function printNextLine() {
+            if (index < steps.length) {
+                const step = steps[index];
+                const icon = step.type === 'pass' ? 'fa-circle-check' : (step.type === 'fail' ? 'fa-circle-xmark' : 'fa-info-circle');
+
+                const lineDiv = document.createElement('div');
+                lineDiv.className = `test-line ${step.type}`;
+                lineDiv.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${step.text}</span>`;
+
+                consoleElement.appendChild(lineDiv);
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+
+                index++;
+                setTimeout(printNextLine, 450); // Simulated processing delay
+            }
+        }
+
+        printNextLine();
+    }
+</script>
+</body>
+</html>
