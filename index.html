@@ -666,6 +666,11 @@
       color: var(--accent);
       border: 1px solid rgba(0, 229, 160, 0.3);
     }
+    .project-type.mobile {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.35);
+    }
 
     .project-badge-recent {
       font-size: .62rem;
@@ -1218,12 +1223,13 @@
     </div>
 
     <p class="hero-bio">
-      Estudante de <strong>Engenharia de Software</strong> especializado em <strong>QA &amp; Automação de Testes</strong> (Selenium, Cucumber BDD, REST Assured, Cypress). Desenvolvendo soluções robustas no ecossistema <strong>Java &amp; Spring Boot</strong> e integrando soluções modernas com <strong>Python &amp; Inteligência Artificial</strong>.
+      Estudante de <strong>Engenharia de Software</strong> especializado em <strong>QA &amp; Automação de Testes</strong> (Selenium, Cucumber BDD, REST Assured, Cypress). Desenvolvendo soluções corporativas completas como o <strong>Ecossistema White-Label para Supermercados</strong> (Mobile &amp; Agente ERP), APIs em <strong>Java &amp; Spring Boot</strong> e integrações com <strong>Python &amp; Inteligência Artificial</strong>.
     </p>
 
     <!-- INTERACTIVE FILTER SHORTCUT TAGS -->
     <div class="hero-tags">
       <button class="tag-filter-btn" data-filter="all">⚡ Todos Projetos</button>
+      <button class="tag-filter-btn" data-filter="mobile">🛒 App Supermercado</button>
       <button class="tag-filter-btn" data-filter="qa">🛡️ QA &amp; Automação</button>
       <button class="tag-filter-btn" data-filter="java">☕ Java &amp; Backend</button>
       <button class="tag-filter-btn" data-filter="ia">🤖 IA &amp; Python</button>
@@ -1248,7 +1254,7 @@
   <div class="stats-bar">
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-number" data-target="6">0</div>
+        <div class="stat-number" data-target="7">0</div>
         <div class="stat-label">Projetos em Destaque</div>
       </div>
       <div class="stat-card">
@@ -1256,8 +1262,8 @@
         <div class="stat-label">Código Aberto no GitHub</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number purple" data-target="3">0</div>
-        <div class="stat-label">Especialidades (QA, Java & IA)</div>
+        <div class="stat-number purple" data-target="4">0</div>
+        <div class="stat-label">Pilares (Mobile, QA, Java &amp; IA)</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" style="color:var(--text); font-size:1.6rem; margin-top:.4rem;">24h</div>
@@ -1295,14 +1301,14 @@
       <div class="skill-card">
         <div class="skill-category blue">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          Desenvolvimento &amp; Dados
+          Desenvolvimento, Mobile &amp; Dados
         </div>
         <div class="skill-items">
+          <div class="skill-item"><span>React Native / Expo (Mobile)</span><div class="skill-bar"><div class="skill-fill blue" data-pct="75"></div></div></div>
           <div class="skill-item"><span>Java 17+ (POO &amp; Design)</span><div class="skill-bar"><div class="skill-fill blue" data-pct="65"></div></div></div>
           <div class="skill-item"><span>Spring Boot 3 / JPA Hibernate</span><div class="skill-bar"><div class="skill-fill blue" data-pct="55"></div></div></div>
-          <div class="skill-item"><span>Python 3.10+ (APIs &amp; Scripts)</span><div class="skill-bar"><div class="skill-fill blue" data-pct="70"></div></div></div>
-          <div class="skill-item"><span>SQL (MySQL, SQLite, H2)</span><div class="skill-bar"><div class="skill-fill blue" data-pct="65"></div></div></div>
-          <div class="skill-item"><span>HTML5, CSS3 &amp; JavaScript</span><div class="skill-bar"><div class="skill-fill blue" data-pct="75"></div></div></div>
+          <div class="skill-item"><span>Node.js / Express &amp; Python</span><div class="skill-bar"><div class="skill-fill blue" data-pct="75"></div></div></div>
+          <div class="skill-item"><span>SQL (MySQL, SQLite, H2)</span><div class="skill-bar"><div class="skill-fill blue" data-pct="70"></div></div></div>
           <div class="skill-item"><span>Git &amp; GitHub Flow</span><div class="skill-bar"><div class="skill-fill blue" data-pct="80"></div></div></div>
         </div>
       </div>
@@ -1336,7 +1342,8 @@
     <!-- FILTER TABS -->
     <div class="filter-container">
       <span class="filter-label">Filtrar:</span>
-      <button class="filter-tab active" data-category="all">Todos <span class="count">6</span></button>
+      <button class="filter-tab active" data-category="all">Todos <span class="count">7</span></button>
+      <button class="filter-tab" data-category="mobile">Apps &amp; Mobile <span class="count">1</span></button>
       <button class="filter-tab" data-category="qa">QA &amp; Automação <span class="count">4</span></button>
       <button class="filter-tab" data-category="java">Backend &amp; Java <span class="count">2</span></button>
       <button class="filter-tab" data-category="ia">IA &amp; Python <span class="count">1</span></button>
@@ -1344,12 +1351,45 @@
 
     <div class="projects-list" id="projectsContainer">
 
-      <!-- PROJETO 1: NOVO - ASSISTENTE FINANCEIRO IA (ÚLTIMO PROJETO) -->
+      <!-- PROJETO: ECOSSISTEMA WHITE-LABEL PARA SUPERMERCADOS (APP MOBILE & ERP SYNC) -->
+      <article class="project-card featured-card" data-category="mobile" data-keywords="mobile react native app supermercado varejo node erp sqlite expo ean13">
+        <div>
+          <div class="project-top-meta">
+            <span class="project-type mobile">🛒 Mobile &amp; Fullstack · Varejo Alimentar</span>
+            <span class="project-badge-recent">✨ Mais Recente</span>
+          </div>
+          <h3 class="project-name">Ecossistema White-Label para Supermercados (App Mobile &amp; ERP Sync)</h3>
+          <p class="project-desc">
+            Solução de varejo alimentar de ponta a ponta que resolve o maior gargalo do setor: <strong>integrar sistemas ERP legados sem API pública disponível</strong> por meio de um <strong>Agente On-Premise Seguro</strong> que sincroniza catálogo, preços, estoque e pré-vendas diretamente do banco local para a nuvem. Inclui <strong>Aplicativo Mobile (iOS &amp; Android)</strong> em React Native com motor de theming White-Label, leitor de código de barras (EAN-13), listas de compras e <strong>Painel Administrativo Web</strong> com monitoramento em tempo real.
+          </p>
+          <div class="project-stack">
+            <span class="stack-pill">React Native / Expo</span>
+            <span class="stack-pill">Node.js / Express</span>
+            <span class="stack-pill">Agente On-Premise (ERP)</span>
+            <span class="stack-pill">SQLite / PostgreSQL</span>
+            <span class="stack-pill">White-Label Engine</span>
+            <span class="stack-pill">Leitor EAN-13 (Câmera)</span>
+            <span class="stack-pill">Tailwind CSS</span>
+            <span class="stack-pill">Monorepo</span>
+          </div>
+        </div>
+        <div class="project-actions">
+          <a href="https://github.com/RomarioGamaa/supermarket-ecosystem" target="_blank" rel="noopener noreferrer" class="project-link-btn" style="background:#16a34a; border-color:#16a34a; color:#fff;">
+            <span>Repositório GitHub</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
+          </a>
+          <button class="project-link-secondary open-specs-btn" data-project="supermarket-app">
+            <span>Ver Arquitetura &amp; Specs</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- PROJETO 1: ASSISTENTE FINANCEIRO IA -->
       <article class="project-card featured-card" data-category="ia" data-keywords="ia python sqlite nlp chat prompt api">
         <div>
           <div class="project-top-meta">
             <span class="project-type ia">🤖 IA · Automação &amp; Backend</span>
-            <span class="project-badge-recent">✨ Mais Recente</span>
+            <span class="project-badge-recent">Destaque IA</span>
           </div>
           <h3 class="project-name">Assistente Financeiro Inteligente (IA &amp; NLP)</h3>
           <p class="project-desc">
@@ -1661,6 +1701,7 @@
        ======================================================== */
     const typewriterEl = document.getElementById('typewriter');
     const roles = [
+      'Ecossistema Supermercado (Mobile & Agente ERP)',
       'QA & Automação de Testes (E2E / API / BDD)',
       'Desenvolvedor Java & Spring Boot 3',
       'Python & Integração com Modelos de IA',
@@ -1834,6 +1875,7 @@
         if (filter === 'qa' || filter === 'bdd') targetCategory = 'qa';
         else if (filter === 'java' || filter === 'api') targetCategory = 'java';
         else if (filter === 'ia') targetCategory = 'ia';
+        else if (filter === 'mobile') targetCategory = 'mobile';
 
         applyFilter(targetCategory);
         document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
@@ -1933,6 +1975,19 @@
        7. INTERACTIVE PROJECT DETAILS MODAL
        ======================================================== */
     const projectSpecsData = {
+      'supermarket-app': {
+        title: 'Ecossistema White-Label para Supermercados (App Mobile & ERP Sync)',
+        type: 'Mobile & Fullstack · Varejo Alimentar',
+        typeClass: 'mobile',
+        desc: 'Solução completa e escalável de varejo alimentar concebida para atender estabelecimentos com identidade própria, reaproveitando até 70% de código e infraestrutura entre clientes.',
+        highlights: [
+          'Agente On-Premise para ERP sem API: Serviço local seguro que lê a base de dados do ERP físico do supermercado (SQL Server, Firebird, PostgreSQL, etc.) em modo read-only e sincroniza catálogo, estoque e preços incrementalmente via HTTPS com a nuvem.',
+          'Injeção Automática de Pré-Vendas: Pedidos finalizados no aplicativo móvel são capturados pela API e inseridos diretamente na tabela de pré-vendas/orçamentos do ERP local para faturamento direto no caixa/PDV.',
+          'Aplicativo Mobile White-Label (iOS & Android): Desenvolvido em React Native / Expo com motor de theming dinâmico por supermercado, leitor de código de barras EAN-13 via câmera e listas de compras rápidas.',
+          'Painel Administrativo Web & Monorepo: Dashboard com métricas de faturamento em tempo real, fluxo de separação de pedidos, monitor de sincronização do ERP (heartbeat) e documentação técnica completa.'
+        ],
+        github: 'https://github.com/RomarioGamaa/supermarket-ecosystem'
+      },
       'assistente-ia': {
         title: 'Assistente Financeiro com Inteligência Artificial',
         type: 'IA · Automação & Backend',
